@@ -181,13 +181,18 @@ Vous pouvez également explorer les sections "Comment ça marche" ou "Impact" pl
   }
 
 
-  // --- notifications ---
-  // sans backend pas de vraie notif push (faudrait un service worker +
-  // un service de push genre FCM/OneSignal). ici on utilise juste la
-  // Web Notifications API du navigateur, qui marche seulement tant que
-  // l'onglet reste ouvert. en repli, un toast interne si la permission
-  // est refusée ou l'API absente.
+  // --- Service Worker Registration (pour PWA et notifications) ---
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('[App] Service Worker registered:', registration);
+      })
+      .catch((error) => {
+        console.log('[App] Service Worker registration failed:', error);
+      });
+  }
 
+  // --- notifications avec support push PWA ---
   const DEMO_ALERT_MESSAGE = "Fortes pluies attendues dans les 48h sur votre zone. Préparez le drainage des parcelles basses et sécurisez le bétail en zone basse.";
   const DEMO_ALERT_TITLE = "ECO-VERT — Alerte climatique";
 
@@ -216,34 +221,77 @@ Vous pouvez également explorer les sections "Comment ça marche" ou "Impact" pl
     clearTimeout(toastTimeoutId);
   }
 
+  // Demande la permission pour les notifications au démarrage (une seule fois)
+  function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+      console.log('[App] Notifications not supported');
+      return;
+    }
+
+    // Ne demander que si la permission n'a pas encore été décidée
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().then((permission) => {
+        console.log('[App] Notification permission:', permission);
+        if (permission === 'granted') {
+          console.log('[App] Notifications enabled');
+        }
+      });
+    }
+  }
+
   function triggerDemoAlert() {
-    // Tente d'abord une vraie notification navigateur (Web Notifications API).
     const canUseNativeNotifications = 'Notification' in window;
 
+    // Essayer d'abord une notification push via Service Worker (marche même en arrière-plan PWA)
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.showNotification) {
+          console.log('[App] Sending push via Service Worker');
+          registration.showNotification(DEMO_ALERT_TITLE, {
+            body: DEMO_ALERT_MESSAGE,
+            icon: '/images/logo.svg',
+            badge: '/images/logo.svg',
+            tag: 'eco-vert-demo-alert',
+            requireInteraction: true,
+            actions: [
+              { action: 'open', title: 'Voir les détails' }
+            ]
+          }).then(() => {
+            showToast(DEMO_ALERT_MESSAGE);
+          });
+        }
+      });
+      return;
+    }
+
+    // Fallback: Web Notifications API standard (tant que l'onglet est ouvert)
     if (canUseNativeNotifications && Notification.permission === 'granted') {
       new Notification(DEMO_ALERT_TITLE, {
         body: DEMO_ALERT_MESSAGE,
-        // Pas d'icône externe pour rester autonome (pas de dépendance réseau)
+        icon: '/images/logo.svg',
+        badge: '/images/logo.svg',
+        tag: 'eco-vert-demo-alert'
       });
-      // On affiche aussi le toast interne en complément, pour la cohérence
-      // visuelle de la démo même quand la notification système fonctionne.
       showToast(DEMO_ALERT_MESSAGE);
       return;
     }
 
+    // Si pas de permission mais API disponible, demander la permission
     if (canUseNativeNotifications && Notification.permission !== 'denied') {
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          new Notification(DEMO_ALERT_TITLE, { body: DEMO_ALERT_MESSAGE });
+          new Notification(DEMO_ALERT_TITLE, {
+            body: DEMO_ALERT_MESSAGE,
+            icon: '/images/logo.svg',
+            badge: '/images/logo.svg'
+          });
         }
-        // Que la permission soit accordée ou refusée, le toast interne
-        // garantit que la démo reste visible dans tous les cas.
         showToast(DEMO_ALERT_MESSAGE);
       });
       return;
     }
 
-    // Permission refusée ou API indisponible : repli total sur le toast interne.
+    // Fallback final: toast interne
     showToast(DEMO_ALERT_MESSAGE);
   }
 
@@ -254,6 +302,9 @@ Vous pouvez également explorer les sections "Comment ça marche" ou "Impact" pl
   if (simulateAlertBtn) {
     simulateAlertBtn.addEventListener('click', triggerDemoAlert);
   }
+
+  // Demande la permission pour les notifications au démarrage
+  requestNotificationPermission();
 
   // Déclenchement automatique d'une alerte de démonstration quelques
   // secondes après l'arrivée sur le site, pour montrer le système en
