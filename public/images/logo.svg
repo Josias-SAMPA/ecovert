@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Feuille verte représentant l'environnement -->
+  <path d="M16 2C16 2 8 8 8 16C8 22 12 28 16 30C20 28 24 22 24 16C24 8 16 2 16 2Z" fill="#2B6E5C" stroke="#15523F" stroke-width="0.5"/>
+  <!-- Nervure centrale -->
+  <line x1="16" y1="2" x2="16" y2="30" stroke="#15523F" stroke-width="0.8" opacity="0.6"/>
+  <!-- Nervures secondaires gauche -->
+  <path d="M12 6 Q10 10 11 16" stroke="#15523F" stroke-width="0.6" fill="none" opacity="0.5"/>
+  <path d="M10 10 Q9 14 10 18" stroke="#15523F" stroke-width="0.6" fill="none" opacity="0.5"/>
+  <!-- Nervures secondaires droite -->
+  <path d="M20 6 Q22 10 21 16" stroke="#15523F" stroke-width="0.6" fill="none" opacity="0.5"/>
+  <path d="M22 10 Q23 14 22 18" stroke="#15523F" stroke-width="0.6" fill="none" opacity="0.5"/>
+</svg>

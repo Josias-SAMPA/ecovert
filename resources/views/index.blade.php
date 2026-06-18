@@ -26,8 +26,8 @@
 
 <header class="nav" id="nav">
   <div class="nav__inner">
-    <a href="#top" class="nav__logo">
-      <span class="nav__logo-mark" aria-hidden="true"></span>
+    <a href="{{ route('index') }}" class="nav__logo">
+      <img src="{{ asset('images/logo.svg') }}" alt="ECO-VERT Logo" class="nav__logo-img">
       ECO-VERT
     </a>
 
@@ -38,7 +38,19 @@
       <a href="#partenaires">Partenaires</a>
     </nav>
 
-    <a href="#partenaires" class="btn btn--accent btn--small nav__cta">Devenir partenaire</a>
+    <div class="nav__auth">
+      @auth
+        <span style="margin-right: 16px; font-size: 0.9rem;">{{ auth()->user()->name }}</span>
+        <a href="{{ route('user.dashboard') }}" class="btn btn--ghost btn--small">Dashboard</a>
+        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+          @csrf
+          <button type="submit" class="btn btn--accent btn--small" style="margin-left: 8px;">Déconnexion</button>
+        </form>
+      @else
+        <a href="{{ route('login') }}" class="btn btn--accent btn--small">Se connecter</a>
+        <a href="{{ route('register') }}" class="btn btn--accent btn--small nav__cta">Devenir partenaire</a>
+      @endauth
+    </div>
 
     <button class="nav__burger" id="nav-burger" aria-label="Ouvrir le menu" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -50,7 +62,16 @@
     <a href="#comment-ca-marche">Comment ça marche</a>
     <a href="#impact">Impact</a>
     <a href="#partenaires">Partenaires</a>
-    <a href="#partenaires" class="btn btn--accent btn--small">Devenir partenaire</a>
+    @auth
+      <a href="{{ route('user.dashboard') }}" class="btn btn--ghost btn--small" style="display: block; margin-top: 12px;">Dashboard</a>
+      <form method="POST" action="{{ route('logout') }}" style="display: block; margin-top: 8px;">
+        @csrf
+        <button type="submit" class="btn btn--accent btn--small" style="width: 100%;">Déconnexion</button>
+      </form>
+    @else
+      <a href="{{ route('login') }}" class="btn btn--ghost btn--small" style="display: block; margin-top: 12px;">Se connecter</a>
+      <a href="{{ route('register') }}" class="btn btn--accent btn--small" style="display: block; margin-top: 8px;">Devenir partenaire</a>
+    @endauth
   </nav>
 </header>
 
@@ -214,19 +235,19 @@
           <h3 class="flow__step-title">Collecte des données</h3>
           <p class="flow__step-text">Sources météorologiques locales et régionales, agrégées en continu.</p>
         </div>
-        <div class="flow__arrow" aria-hidden="true">→</div>
+        <div class="flow__arrow" aria-hidden="true"></div>
         <div class="flow__step">
           <span class="flow__step-num">02</span>
           <h3 class="flow__step-title">Traitement et analyse</h3>
           <p class="flow__step-text">Les données brutes sont converties en risques et conseils concrets.</p>
         </div>
-        <div class="flow__arrow" aria-hidden="true">→</div>
+        <div class="flow__arrow" aria-hidden="true"></div>
         <div class="flow__step">
           <span class="flow__step-num">03</span>
           <h3 class="flow__step-title">Diffusion</h3>
           <p class="flow__step-text">SMS, application mobile et WhatsApp — le canal que le producteur utilise déjà.</p>
         </div>
-        <div class="flow__arrow" aria-hidden="true">→</div>
+        <div class="flow__arrow" aria-hidden="true"></div>
         <div class="flow__step">
           <span class="flow__step-num">04</span>
           <h3 class="flow__step-title">Action sur le terrain</h3>
@@ -354,7 +375,7 @@
     </div>
 
     <div class="partners-cta__ctas">
-      <a href="mailto:partenaires@eco-vert.example" class="btn btn--accent btn--lg">Discuter du partenariat</a>
+      <a href="{{ route('register') }}" class="btn btn--accent btn--lg">Devenir partenaire</a>
     </div>
   </div>
 </section>
@@ -362,7 +383,7 @@
 <footer class="footer">
   <div class="section-inner footer__inner">
     <a href="#top" class="footer__logo">
-      <span class="nav__logo-mark" aria-hidden="true"></span>
+      <img src="{{ asset('images/logo.svg') }}" alt="ECO-VERT Logo" class="footer__logo-img">
       ECO-VERT
     </a>
     <nav class="footer__links" aria-label="Navigation footer">
@@ -378,7 +399,9 @@
 <!-- chatbot par mots-clés, pas d'IA générative (pas de backend pour cacher une clé API) -->
 <div class="chatbot" id="chatbot">
   <button class="chatbot__toggle" id="chatbot-toggle" aria-label="Ouvrir l'assistant ECO-VERT" aria-expanded="false">
-    <span class="chatbot__toggle-icon" id="chatbot-toggle-icon">💬</span>
+    <svg class="chatbot__toggle-icon" id="chatbot-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
   </button>
 
   <div class="chatbot__panel" id="chatbot-panel" role="dialog" aria-label="Assistant ECO-VERT" aria-hidden="true">
@@ -392,8 +415,7 @@
 
     <div class="chatbot__messages" id="chatbot-messages">
       <div class="chatbot__message chatbot__message--bot">
-        Bonjour. Posez-moi une question sur les alertes, les canaux, les
-        tarifs ou comment devenir partenaire.
+        Bonjour  ! Bienvenue chez ECO-VERT. Je suis votre assistant et je suis ici pour vous aider. Comment puis-je vous assister aujourd'hui ?
       </div>
     </div>
 
@@ -405,7 +427,11 @@
 
     <form class="chatbot__input-row" id="chatbot-form">
       <input type="text" id="chatbot-input" class="chatbot__input" placeholder="Écrivez votre question…" aria-label="Votre question" autocomplete="off">
-      <button type="submit" class="chatbot__send" aria-label="Envoyer">→</button>
+      <button type="submit" class="chatbot__send" aria-label="Envoyer">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H.75a.75.75 0 000 1.5h4.232l2.432 7.905a.75.75 0 00.926.94l19.5-13a.75.75 0 000-1.22l-19.5-13z"/>
+        </svg>
+      </button>
     </form>
   </div>
 </div>

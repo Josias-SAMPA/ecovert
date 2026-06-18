@@ -72,7 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  const defaultResponse = "Je n'ai pas de réponse précise à cette question pour le moment. Je vous invite à consulter les sections \"Comment ça marche\" ou \"Impact\" plus haut sur la page, ou à nous contacter directement via la section Partenaires.";
+  const defaultResponse = `Merci pour votre question . Je ne suis pas certain d'avoir une réponse précise à ce sujet. 
+
+N'hésitez pas à contacter notre équipe directement sur WhatsApp, elle se fera un plaisir de vous aider :
+ <a href="https://wa.me/237698290191" target="_blank" style="color: var(--crop-green); text-decoration: none; font-weight: 600;">+237 698 290 191</a>
+ <a href="https://wa.me/237656856090" target="_blank" style="color: var(--crop-green); text-decoration: none; font-weight: 600;">+237 656 865 090</a>
+
+Vous pouvez également explorer les sections "Comment ça marche" ou "Impact" plus haut sur la page.`;
 
   function normalize(text) {
     return text
@@ -124,7 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function appendMessage(text, sender) {
     const msgEl = document.createElement('div');
     msgEl.classList.add('chatbot__message', sender === 'user' ? 'chatbot__message--user' : 'chatbot__message--bot');
-    msgEl.textContent = text;
+    
+    // Pour les messages bot, utiliser innerHTML pour permettre les liens
+    if (sender === 'bot') {
+      msgEl.innerHTML = text;
+    } else {
+      msgEl.textContent = text;
+    }
+    
     chatbotMessages.appendChild(msgEl);
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
   }

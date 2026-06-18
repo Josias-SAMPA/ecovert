@@ -218,6 +218,13 @@ button {
   margin-left: auto;
 }
 
+.nav__auth {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
 .nav__burger {
   display: none;
   flex-direction: column;
@@ -978,6 +985,11 @@ button {
   transition: background 0.15s ease;
 }
 
+.chatbot__toggle-icon {
+  width: 28px;
+  height: 28px;
+}
+
 .chatbot__toggle:hover {
   background: var(--ochre-light);
 }
@@ -1075,6 +1087,18 @@ button {
   border-bottom-right-radius: 4px;
 }
 
+.chatbot__message--bot a {
+  color: var(--forest-deep);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid var(--ochre);
+  transition: border-color 0.2s ease;
+}
+
+.chatbot__message--bot a:hover {
+  border-bottom-color: var(--ochre-light);
+}
+
 .chatbot__quick-replies {
   display: flex;
   gap: 8px;
@@ -1131,6 +1155,14 @@ button {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s ease;
+}
+
+.chatbot__send svg {
+  width: 20px;
+  height: 20px;
 }
 
 .chatbot__send:hover {
