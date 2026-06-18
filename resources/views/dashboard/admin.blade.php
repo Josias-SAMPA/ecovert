@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord Admin - ECO-VERT</title>
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.svg') }}">
+    <meta name="theme-color" content="#2B6E5C">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="{{ asset('files/style.css') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
